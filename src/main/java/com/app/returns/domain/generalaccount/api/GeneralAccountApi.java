@@ -1,0 +1,40 @@
+package com.app.returns.domain.generalaccount.api;
+
+import com.app.returns.domain.generalaccount.dto.request.GeneralAccountRequestDTO;
+import com.app.returns.domain.generalaccount.dto.response.GeneralAccountResponseDTO;
+import com.app.returns.domain.generalaccount.service.GeneralAccountService;
+import com.app.returns.global.response.ApiResponseDTO;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import java.util.List;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+@Validated
+@RestController
+@RequiredArgsConstructor
+@RequestMapping("/api/general-accounts")
+public class GeneralAccountApi {
+    private final GeneralAccountService generalAccountService;
+
+    @PostMapping("/verify")
+    public ResponseEntity<ApiResponseDTO<GeneralAccountResponseDTO>> verifyGeneralAccount(
+            @Valid @RequestBody GeneralAccountRequestDTO requestDTO) {
+        GeneralAccountResponseDTO result = generalAccountService.verifyGeneralAccount(requestDTO);
+        return ResponseEntity.ok(ApiResponseDTO.of("일반계좌 검증 성공", result));
+    }
+
+    @GetMapping
+    public ResponseEntity<ApiResponseDTO<List<GeneralAccountResponseDTO>>> findByCiHash(
+            @RequestParam @NotBlank String ciHash) {
+        return ResponseEntity.ok(
+                ApiResponseDTO.of("일반계좌 목록 조회 성공", generalAccountService.findByCiHash(ciHash)));
+    }
+}
